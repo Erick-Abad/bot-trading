@@ -47,14 +47,20 @@
   <button onclick="startBot()">Iniciar Bot</button>
   <button onclick="stopBot()">Detener Bot</button>
 
-  <div id="senal">Esperando señal...</div>
+  <div id="senal">⏳ Sin señales recientes.</div>
 
   <script>
     async function startBot() {
       try {
         const res = await fetch('/api/start-bot');
         const data = await res.json();
-        alert(data.mensaje || "✅ Bot iniciado correctamente");
+
+        if (data?.error) {
+          alert(`❌ ${data.error} – ${data.detalle || ''}`);
+        } else {
+          alert(data.mensaje || "✅ Bot iniciado correctamente");
+        }
+
       } catch (e) {
         console.error('❌ Error al iniciar el bot:', e);
         alert("❌ Error al iniciar el bot. Consulta la consola.");
@@ -77,15 +83,21 @@
       try {
         const res = await fetch('/api/ultima-senal');
         const data = await res.json();
+
         if (data?.senal) {
-          document.getElementById('senal').innerText = `📈 Señal: ${data.senal.tipo} | Confianza: ${data.senal.confianza} | Hora: ${data.senal.hora}`;
+          const { tipo, confianza, hora } = data.senal;
+          document.getElementById('senal').innerText =
+            `📈 Señal: ${tipo} | Confianza: ${confianza} | Hora: ${hora}`;
         } else {
           document.getElementById('senal').innerText = "⏳ Sin señales recientes.";
         }
+
       } catch (e) {
         document.getElementById('senal').innerText = "⚠️ Error al obtener la señal.";
+        console.error('❌ Error al obtener /api/ultima-senal:', e);
       }
     }, 5000);
   </script>
 </body>
 </html>
+
