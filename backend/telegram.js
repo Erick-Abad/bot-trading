@@ -1,22 +1,16 @@
-require('dotenv').config();
-const TelegramBot = require('node-telegram-bot-api');
+import TelegramBot from 'node-telegram-bot-api';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN);
 
-async function enviarSenalTelegram({ senal, confianza }) {
-  const ahora = new Date();
-  const ejecutarDespues = new Date(ahora.getTime() + 60000); // +1 min
-
-  const formato = h => h.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-  const mensaje = `📊 Señal Cripto IDX (Binomo)
-👉 Señal: ${senal}
-🎯 Confianza: ${confianza}
-⏱️ Duración: 1 minuto
-🕒 Hora: ${formato(ahora)}
-⚠️ Ejecutar después de terminar la vela actual (~${formato(ejecutarDespues)})`;
-
+export async function enviarSenalTelegram(resultado) {
+  const mensaje = `
+📊 Señal Cripto IDX (Binomo)
+👉 Señal: ${resultado.senal}
+🎯 Confianza: ${resultado.confianza}
+🕒 Hora: ${(new Date()).toLocaleTimeString('es-EC')}
+⚠️ Ejecutar después de que termine la vela actual de 1 minuto.
+  `;
   await bot.sendMessage(process.env.CHAT_ID, mensaje);
-  console.log("✅ Señal enviada:", senal);
 }
-
-module.exports = { enviarSenalTelegram };

@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Bot de Señales Cripto IDX</title>
+  <meta charset="UTF-8">
+  <title>Bot de Señales</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="contenedor">
-    <h1>📈 Última señal del bot</h1>
-    <p id="senal">Cargando...</p>
-    <script src="app.js"></script>
-  </div>
+  <h1>Historial de Señales</h1>
+  <ul id="historial"></ul>
+
+  <script>
+    async function cargarSenales() {
+      const res = await fetch('/api/ultimas-senales');
+      const datos = await res.json();
+      const lista = document.getElementById('historial');
+      lista.innerHTML = '';
+      datos.forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = `${s.hora} → ${s.senal} (${s.confianza})`;
+        lista.appendChild(li);
+      });
+    }
+
+    setInterval(cargarSenales, 10000);
+    cargarSenales();
+  </script>
 </body>
 </html>
