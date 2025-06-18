@@ -1,9 +1,11 @@
-const { analizarMercado } = require('../backend/indicadores');
-const { enviarSenalTelegram } = require('../backend/telegram');
+// backend/bot.js
+const { analizarMercado } = require('./indicadores');
+const { enviarSenalTelegram } = require('./telegram');
 
+let intervalo = null;
 let historial = [];
 
-export default async function handler(req, res) {
+async function ejecutarBot() {
   const resultado = await analizarMercado();
 
   if (resultado) {
@@ -16,7 +18,7 @@ export default async function handler(req, res) {
     historial.push(senal);
     await enviarSenalTelegram(senal);
 
-    // Eliminar señales mayores a 1 hora
+    // Mantener solo las señales de la última hora
     const unaHora = 1000 * 60 * 60;
     const ahora = Date.now();
     historial = historial.filter(s => {
@@ -27,9 +29,29 @@ export default async function handler(req, res) {
       fecha.setSeconds(parseInt(partes[2]));
       return ahora - fecha.getTime() < unaHora;
     });
-
-    return res.json({ senal });
-  } else {
-    return res.json({ senal: null });
   }
 }
+
+function iniciarBot() {
+  if (!intervalo) {
+    ejecutarBot();
+    intervalo = setInterval(ejecutarBot, 5 * 60 * 1000);
+    console.log("✅ Bot de trading iniciado");
+  }
+}
+
+function detenerBot() {
+  clearInterval(intervalo);
+  intervalo = null;
+  console.log("🛑 Bot detenido");
+}
+
+function obtenerUltimasSenales() {
+  return historial;
+}
+
+module.exports = {
+  iniciarBot,
+  detenerBot,
+  obtenerUltimasSenales
+};

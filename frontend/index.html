@@ -7,23 +7,26 @@
 </head>
 <body>
   <h1>Historial de Señales</h1>
-  <ul id="historial"></ul>
+  <button onclick="startBot()">Iniciar Bot</button>
+  <button onclick="stopBot()">Detener Bot</button>
+  <div id="senal"></div>
 
   <script>
-    async function cargarSenales() {
-      const res = await fetch('/api/ultimas-senales');
-      const datos = await res.json();
-      const lista = document.getElementById('historial');
-      lista.innerHTML = '';
-      datos.forEach(s => {
-        const li = document.createElement('li');
-        li.textContent = `${s.hora} → ${s.senal} (${s.confianza})`;
-        lista.appendChild(li);
-      });
+    function startBot() {
+      fetch('/api/start-bot').then(() => alert("🔄 Bot iniciado"));
     }
 
-    setInterval(cargarSenales, 10000);
-    cargarSenales();
+    function stopBot() {
+      fetch('/api/stop-bot').then(() => alert("🛑 Bot detenido"));
+    }
+
+    setInterval(() => {
+      fetch('/api/ultima-senal')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('senal').innerText = data.senal || "Sin señal aún";
+        });
+    }, 3000);
   </script>
 </body>
 </html>
