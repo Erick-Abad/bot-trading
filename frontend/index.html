@@ -11,29 +11,17 @@
   <button onclick="stopBot()">Detener Bot</button>
   <div id="senal"></div>
 
-  <script>
+ <script>
   async function startBot() {
     try {
       const res = await fetch('/api/start-bot');
       const data = await res.json();
-      alert(data.mensaje || "Bot iniciado");
+      alert(data.mensaje || "Bot iniciado correctamente");
     } catch (e) {
       console.error('Error al iniciar el bot:', e);
-      alert("Error al iniciar el bot");
+      alert("❌ Error al iniciar el bot. Consulta la consola.");
     }
   }
-
-  async function fetchUltimaSenal() {
-    try {
-      const res = await fetch('/api/ultima-senal');
-      const data = await res.json();
-      console.log(data.historial);
-    } catch (e) {
-      console.error('No se pudo obtener la señal:', e);
-    }
-  }
-
-  setInterval(fetchUltimaSenal, 30000); // cada 30 segundos
 </script>
 
 </body>
