@@ -1,4 +1,3 @@
-// api/ultima-senal.js
 let cache = [];
 
 export function setHistorial(nuevoHistorial) {
@@ -6,5 +5,6 @@ export function setHistorial(nuevoHistorial) {
 }
 
 export default function handler(req, res) {
-  res.status(200).json({ historial: cache });
+  const ultima = cache.length > 0 ? cache[cache.length - 1] : null;
+  res.status(200).json({ senal: ultima });
 }

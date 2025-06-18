@@ -5,22 +5,13 @@ export default async function handler(req, res) {
   try {
     const resultado = await analizarMercado();
 
-    if (resultado) {
-      const senal = {
-        tipo: resultado.senal,
-        confianza: resultado.confianza,
-        hora: new Date().toISOString()
-      };
-
-      await enviarSenalTelegram(senal);
-
-      return res.status(200).json({ mensaje: '✅ Bot iniciado y señal enviada', senal });
+    if (resultado?.senal !== "null") {
+      await enviarSenalTelegram(resultado);
+      return res.status(200).json({ mensaje: '✅ Señal enviada', senal: resultado });
     } else {
-      return res.status(200).json({ mensaje: '⚠️ Sin señales por ahora' });
+      return res.status(200).json({ mensaje: '⚠️ No se generó señal útil' });
     }
-
   } catch (err) {
-    console.error('❌ Error en el handler:', err);
-    return res.status(500).json({ error: '❌ Error al iniciar el bot', detalle: err.message });
+    return res.status(500).json({ error: 'Error al iniciar el bot', detalle: err.message });
   }
 }
