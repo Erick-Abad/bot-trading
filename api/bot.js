@@ -16,10 +16,17 @@ export default async function handler(req, res) {
     historial.push(senal);
     await enviarSenalTelegram(senal);
 
-    // Eliminar señales con más de 1 hora
+    // Eliminar señales mayores a 1 hora
     const unaHora = 1000 * 60 * 60;
     const ahora = Date.now();
-    historial = historial.filter(s => ahora - new Date('1970-01-01T' + s.hora + 'Z').getTime() < unaHora);
+    historial = historial.filter(s => {
+      const partes = s.hora.split(":");
+      const fecha = new Date();
+      fecha.setHours(parseInt(partes[0]));
+      fecha.setMinutes(parseInt(partes[1]));
+      fecha.setSeconds(parseInt(partes[2]));
+      return ahora - fecha.getTime() < unaHora;
+    });
 
     return res.json({ senal });
   } else {
