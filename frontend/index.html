@@ -12,21 +12,29 @@
   <div id="senal"></div>
 
   <script>
-    function startBot() {
-      fetch('/api/start-bot').then(() => alert("🔄 Bot iniciado"));
+  async function startBot() {
+    try {
+      const res = await fetch('/api/start-bot');
+      const data = await res.json();
+      alert(data.mensaje || "Bot iniciado");
+    } catch (e) {
+      console.error('Error al iniciar el bot:', e);
+      alert("Error al iniciar el bot");
     }
+  }
 
-    function stopBot() {
-      fetch('/api/stop-bot').then(() => alert("🛑 Bot detenido"));
+  async function fetchUltimaSenal() {
+    try {
+      const res = await fetch('/api/ultima-senal');
+      const data = await res.json();
+      console.log(data.historial);
+    } catch (e) {
+      console.error('No se pudo obtener la señal:', e);
     }
+  }
 
-    setInterval(() => {
-      fetch('/api/ultima-senal')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('senal').innerText = data.senal || "Sin señal aún";
-        });
-    }, 3000);
-  </script>
+  setInterval(fetchUltimaSenal, 30000); // cada 30 segundos
+</script>
+
 </body>
 </html>
