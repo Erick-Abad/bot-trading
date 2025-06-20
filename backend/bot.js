@@ -1,57 +1,18 @@
-// backend/bot.js
 const { analizarMercado } = require('./indicadores');
 const { enviarSenalTelegram } = require('./telegram');
 
-let intervalo = null;
-let historial = [];
+// Ejecutar una vez al iniciar
+ejecutarBot();
+
+// Ejecutar automáticamente cada 5 minutos
+setInterval(ejecutarBot, 5 * 60 * 1000); // 5 minutos
 
 async function ejecutarBot() {
-  const resultado = await analizarMercado();
-
-  if (resultado) {
-    const senal = {
-      tipo: resultado.senal,
-      confianza: resultado.confianza,
-      hora: new Date().toLocaleTimeString('es-EC'),
-    };
-
-    historial.push(senal);
+  const senal = await analizarMercado();
+  console.log("⚠️ Señal generada:", senal);
+  if (senal) {
     await enviarSenalTelegram(senal);
-
-    // Mantener solo las señales de la última hora
-    const unaHora = 1000 * 60 * 60;
-    const ahora = Date.now();
-    historial = historial.filter(s => {
-      const partes = s.hora.split(":");
-      const fecha = new Date();
-      fecha.setHours(parseInt(partes[0]));
-      fecha.setMinutes(parseInt(partes[1]));
-      fecha.setSeconds(parseInt(partes[2]));
-      return ahora - fecha.getTime() < unaHora;
-    });
+  } else {
+    console.log("❌ No se generó ninguna señal.");
   }
 }
-
-function iniciarBot() {
-  if (!intervalo) {
-    ejecutarBot();
-    intervalo = setInterval(ejecutarBot, 5 * 60 * 1000);
-    console.log("✅ Bot de trading iniciado");
-  }
-}
-
-function detenerBot() {
-  clearInterval(intervalo);
-  intervalo = null;
-  console.log("🛑 Bot detenido");
-}
-
-function obtenerUltimasSenales() {
-  return historial;
-}
-
-module.exports = {
-  iniciarBot,
-  detenerBot,
-  obtenerUltimasSenales
-};

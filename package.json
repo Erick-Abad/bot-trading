@@ -1,8 +1,18 @@
 {
-  "type": "module",
+  "name": "trading-bot-criptoidx",
+  "version": "1.0.0",
+  "main": "backend/bot.js",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "start": "vercel start"
+    "start": "node backend/bot.js"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^5.1.0",
+    "mysql2": "^3.2.4",
+    "node-cron": "^3.0.2",
+    "node-telegram-bot-api": "^0.61.0",
+    "technicalindicators": "^3.1.0"
   }
 }

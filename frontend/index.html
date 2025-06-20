@@ -1,103 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Bot de Señales</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bot de Señales Cripto IDX</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      background-color: #121212;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 2rem;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-    }
-
-    button {
-      background-color: #00b894;
-      border: none;
-      color: white;
-      padding: 12px 24px;
-      margin: 10px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #019875;
-    }
-
-    #senal {
-      margin-top: 2rem;
-      font-size: 1.2rem;
-      color: #00cec9;
-    }
-  </style>
 </head>
 <body>
-  <h1>Historial de Señales</h1>
-
-  <button onclick="startBot()">Iniciar Bot</button>
-  <button onclick="stopBot()">Detener Bot</button>
-
-  <div id="senal">⏳ Sin señales recientes.</div>
-
-  <script>
-    async function startBot() {
-      try {
-        const res = await fetch('/api/start-bot');
-        const data = await res.json();
-
-        if (data?.error) {
-          alert(`❌ ${data.error} – ${data.detalle || ''}`);
-        } else {
-          alert(data.mensaje || "✅ Bot iniciado correctamente");
-        }
-
-      } catch (e) {
-        console.error('❌ Error al iniciar el bot:', e);
-        alert("❌ Error al iniciar el bot. Consulta la consola.");
-      }
-    }
-
-    async function stopBot() {
-      try {
-        const res = await fetch('/api/stop-bot');
-        const data = await res.json();
-        alert(data.mensaje || "🛑 Bot detenido correctamente");
-      } catch (e) {
-        console.error('❌ Error al detener el bot:', e);
-        alert("❌ Error al detener el bot. Consulta la consola.");
-      }
-    }
-
-    // Mostrar última señal en tiempo real (cada 5 seg)
-    setInterval(async () => {
-      try {
-        const res = await fetch('/api/ultima-senal');
-        const data = await res.json();
-
-        if (data?.senal) {
-          const { tipo, confianza, hora } = data.senal;
-          document.getElementById('senal').innerText =
-            `📈 Señal: ${tipo} | Confianza: ${confianza} | Hora: ${hora}`;
-        } else {
-          document.getElementById('senal').innerText = "⏳ Sin señales recientes.";
-        }
-
-      } catch (e) {
-        document.getElementById('senal').innerText = "⚠️ Error al obtener la señal.";
-        console.error('❌ Error al obtener /api/ultima-senal:', e);
-      }
-    }, 5000);
-  </script>
+  <div class="contenedor">
+    <h1>📈 Última señal del bot</h1>
+    <p id="senal">Cargando...</p>
+    <script src="app.js"></script>
+  </div>
 </body>
 </html>
-
